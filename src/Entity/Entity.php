@@ -52,7 +52,6 @@ class Entity
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -64,7 +63,6 @@ class Entity
     public function setThumbnail(string $thumbnail): static
     {
         $this->thumbnail = $thumbnail;
-
         return $this;
     }
 
