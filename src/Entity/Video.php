@@ -184,4 +184,18 @@ class Video
 
         return $this;
     }
+
+    public function getSeasonAndEpisode(): ?string
+    {
+        if ($this->isMovie()) {
+            return null;
+        }
+
+        return "Season {$this->seasonNumber}, Episode {$this->episodeNumber}";
+    }
+
+    public function getEntityId(): ?int
+    {
+        return $this->entity->getId();
+    }
 }
