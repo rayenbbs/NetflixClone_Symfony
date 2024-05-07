@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Entity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -25,7 +26,7 @@ class EntityRepository extends ServiceEntityRepository
            if($categoryId!=null){
                $result->andWhere('e.categoryId = :val')->setParameter('val', $categoryId);
            }
-            return $result->orderBy((new Expr())->rand())
+            return  $result->orderBy('RAND()')
                 ->setMaxResults($limit)
                 ->getQuery()
                ->getResult()
@@ -50,7 +51,7 @@ class EntityRepository extends ServiceEntityRepository
                 $result->andWhere('e.category = :categoryId')
                     ->setParameter('categoryId',$categoryId);
             }
-            $result->orderBy((new Expr())->rand())
+            $result->orderBy('RAND()')
                 ->setMaxResults($limit);
             return $result->getQuery()
                 ->getResult();
@@ -61,12 +62,12 @@ class EntityRepository extends ServiceEntityRepository
             $result->select('DISTINCT(e.id)')
                 ->innerJoin('e.videos','v')
                 ->where('v.isMovie = :isMovie')
-                ->setParameter('isMovie',0);
+                ->setParameter('isMovie',1);
            if($categoryId!==null){
                $result->andWhere('e.category = :categoryId')
                    ->setParameter('categoryId',$categoryId);
            }
-           $result->orderBy((new Expr())->rand())
+           $result->orderBy('RAND()')
                ->setMaxResults($limit);
            return $result->getQuery()
                ->getResult();
