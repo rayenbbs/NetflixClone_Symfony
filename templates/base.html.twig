@@ -2,21 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Tuniflix</title>
+    <link rel="stylesheet" type="text/css" href="{{ asset('publicAssets/style/style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
-    <title>{% block title %}Document{% endblock %}</title>
-    {% block style %}
-    {% endblock %}
-
+    <script src="https://kit.fontawesome.com/be52201d6e.js" crossorigin="anonymous"></script>
+    <script src="{{ asset('publicAssets/js/script.js') }}"> </script>
 </head>
 <body>
+<div class='wrapper'>
+{% include 'includes/navBar.html.twig' %}
 {% block content %}
 
 {% endblock %}
 {% block script %}
 
 {% endblock %}
+    </div>
 </body>
 </html>
