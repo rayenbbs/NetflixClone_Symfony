@@ -74,6 +74,15 @@ class EntityRepository extends ServiceEntityRepository
            return $result->getQuery()
                ->getResult();
     }
+    public function findByTerm(string $term, int $limit = 30): array
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.name LIKE :term')
+            ->setParameter('term', '%' . $term . '%')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 
     public function getSeasons(Entity $entity): array
     {

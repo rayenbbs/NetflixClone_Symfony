@@ -1,0 +1,13 @@
+{# templates/search/results.html.twig #}
+{# This template is used to render the search results #}
+
+{# Check if there are any results #}
+{% if results is not empty %}
+    <ul>
+        {% for result in results %}
+            <li>{{ result.name }}</li> {# Adjust based on your entity structure #}
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No results found.</p>
+{% endif %}
