@@ -43,16 +43,14 @@ class EntityRepository extends ServiceEntityRepository
 
        public function getTVShowEntities($categoryId,$limit){
             $result=$this->createQueryBuilder('e');
-            $result->select('DISTINCT(e.id)')
-                ->innerJoin('e.videos','v')
+            $result->innerJoin('e.videos','v')
                 ->where('v.isMovie = :isMovie')
                 ->setParameter('isMovie',0);
             if($categoryId!==null){
                 $result->andWhere('e.category = :categoryId')
                     ->setParameter('categoryId',$categoryId);
             }
-            $result->orderBy('RAND()')
-                ->setMaxResults($limit);
+            $result->setMaxResults($limit);
             return $result->getQuery()
                 ->getResult();
        }
