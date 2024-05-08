@@ -104,7 +104,6 @@ class Entity
             $this->videos->add($video);
             $video->setEntity($this);
         }
-
         return $this;
     }
 
