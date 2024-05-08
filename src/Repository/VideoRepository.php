@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Entity;
 use App\Entity\Video;
+use App\Entity\Season;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,6 +17,7 @@ class VideoRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Video::class);
     }
+
 
     //    /**
     //     * @return Video[] Returns an array of Video objects

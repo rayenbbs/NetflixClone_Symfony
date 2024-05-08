@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Entity;
+use App\Entity\Video;
+use App\Season;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
@@ -71,6 +73,47 @@ class EntityRepository extends ServiceEntityRepository
                ->setMaxResults($limit);
            return $result->getQuery()
                ->getResult();
+    }
+
+    public function getSeasons(Entity $entity): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        // Get the ID of the entity
+        $entityId = $entity->getId();
+
+        // Create a query builder
+        $queryBuilder = $entityManager->createQueryBuilder();
+
+        // Build the query to fetch videos associated with the entity, grouped by seasons
+        $queryBuilder->select('v')
+            ->from(Video::class, 'v')
+            ->where('v.entity = :entityId')
+            ->andWhere('v.isMovie = :isMovie')
+            ->orderBy('v.season')
+            ->addOrderBy('v.episode')
+            ->setParameter('entityId', $entityId)
+            ->setParameter('isMovie', false);
+
+        $videos = $queryBuilder->getQuery()->getResult();
+
+        // Group the videos by seasons
+        $seasons = [];
+        foreach ($videos as $video) {
+            $seasonNumber = $video->getSeason();
+            if (!isset($seasons[$seasonNumber])) {
+                $seasons[$seasonNumber] = [];
+            }
+            $seasons[$seasonNumber][] = $video;
+        }
+
+        // Create Season objects from the grouped videos
+        $seasonObjects = [];
+        foreach ($seasons as $seasonNumber => $videos) {
+            $seasonObjects[] = new Season($seasonNumber, $videos);
+        }
+
+        return $seasonObjects;
     }
 
     //    /**
