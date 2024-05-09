@@ -32,16 +32,16 @@
     </div>
     <div class='previewCategories'>
         {% for category in categories %}
-            {% if category.getEntities()|length > 0 and not entity.getVideos()[0].isMovie() %}
+            {% if category.getEntities() is not empty and category.getEntities()[0] is not empty and category.getEntities()[0].getVideos() is not empty and category.getEntities()[0].getVideos()[0] is not empty and not category.getEntities()[0].getVideos()[0].isMovie() %}
                 <div class='category'>
                     <a href="{{ path("app_home") }}">{# category ID concatenated TODO #}
                         <h3>{{ category.getName() }}</h3>
                     </a>
                     <div class='entities'>
-                        {% for entity in category.getEntities() %}
+                        {% for entityE in category.getEntities() %}
                             <a href={{ path("app_home") }}> {# entity ID concatenated TODO #}
                                 <div class='previewContainer small'>
-                                    <img src='{{ asset(entity.getThumbnail()) }}' title='{{ entity.getName() }}'>
+                                    <img src='{{ asset(entityE.getThumbnail()) }}' title='{{ entityE.getName() }}'>
                                 </div>
                             </a>
                         {% endfor %}
