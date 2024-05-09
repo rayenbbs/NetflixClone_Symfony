@@ -39,11 +39,10 @@
         </a>
         <div class='entities'>
         {% for entity in category.getEntities() %}
-            <a href={{ path("app_home") }}> {# entity ID concatenated TODO #}
+            <a href={{ path('app.entity', {'id': entity.getId()}) }}> {# entity ID concatenated TODO #}
                 <div class='previewContainer small'>
                     <img src='{{ asset(entity.getThumbnail()) }}' title='{{ entity.getName() }}'>
                 </div>
-            </a>
         {% endfor %}
 
         </div>
