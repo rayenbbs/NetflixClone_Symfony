@@ -1,0 +1,37 @@
+{# templates/settings/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="settingsContainer column">
+        <div class="formSection">
+            <form method="POST">
+                <h2>User Details</h2>
+                {{ form_row(detailsForm.firstName) }}
+                {{ form_row(detailsForm.lastName) }}
+                {{ form_row(detailsForm.email) }}
+
+                <div class="message">
+                    {{ detailsMessage }}
+                </div>
+
+                <input type="submit" name="saveDetailsButton" value="Save">
+            </form>
+        </div>
+
+        <div class="formSection">
+            <form method="POST">
+                <h2>Update Password</h2>
+                {{ form_row(passwordForm.oldPassword) }}
+                {{ form_row(passwordForm.newPassword) }}
+                {{ form_row(passwordForm.newPassword2) }}
+
+                <div class="message">
+                    {{ passwordMessage }}
+                </div>
+
+                <input type="submit" name="updatePasswordButton" value="Update">
+            </form>
+        </div>
+    </div>
+{% endblock %}
