@@ -26,7 +26,7 @@ class EntityRepository extends ServiceEntityRepository
            if($categoryId!=null){
                $result->andWhere('e.categoryId = :val')->setParameter('val', $categoryId);
            }
-            return  $result->orderBy('RAND()')
+            return  $result
                 ->setMaxResults($limit)
                 ->getQuery()
                ->getResult()
