@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Shows!{% endblock %}
+
+{% block content %}
+    <div class='previewContainer'>
+
+        <img src='{{ asset(entity.getThumbnail()) }}' class='previewImage' hidden>
+
+        <video autoplay muted class='previewVideo' onended='previewEnded()'>
+
+            <source src='{{ asset(entity.getPreview()) }}' type='video/mp4'>
+
+        </video>
+
+        <div class='previewOverlay'>
+            <div class='mainDetails'>
+                <h3>{{entity.getName()}}</h3>
+                {% if entity.getVideos()|length > 0 %}
+                    {% if not entity.getVideos()[0].isMovie() %}
+                        <h4>Season {{ entity.getVideos()[0].getSeason() }} Episode {{ entity.getVideos()[0].getEpisode() }}</h4>
+                    {% endif %}
+
+                    <div class='buttons'>
+                        <button onclick='watchVideo({{ entity.getVideos()[0].getId() }})'><i class='fa-solid fa-play'></i>Play</button>
+                        <button onclick='volumeToggle(this)'><i class='fa-solid fa-volume-xmark'></i></button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+    <div class='previewCategories'>
+        {% for category in categories %}
+            {% if category.getEntities() is not empty and category.getEntities()[0] is not empty and category.getEntities()[0].getVideos() is not empty and category.getEntities()[0].getVideos()[0] is not empty and not category.getEntities()[0].getVideos()[0].isMovie() %}
+                <div class='category'>
+                    <a href="{{ path("app_home") }}">{# category ID concatenated TODO #}
+                        <h3>{{ category.getName() }}</h3>
+                    </a>
+                    <div class='entities'>
+                        {% for entityE in category.getEntities() %}
+                            <a href={{ path("app_home") }}> {# entity ID concatenated TODO #}
+                                <div class='previewContainer small'>
+                                    <img src='{{ asset(entityE.getThumbnail()) }}' title='{{ entityE.getName() }}'>
+                                </div>
+                            </a>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+
+
+    </div>
+
+{% endblock %}
