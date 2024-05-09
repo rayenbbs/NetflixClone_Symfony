@@ -6,6 +6,8 @@
 parameters:
 
 services:
+    Symfony\Component\Security\Core\Security:
+        alias: security.helper
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -19,6 +21,12 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    App\Services\CategoryService:
+        arguments:
+            $categoryRepository: '@App\Repository\CategoryRepository'
+            $entityRepository: '@App\Repository\EntityRepository'
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
