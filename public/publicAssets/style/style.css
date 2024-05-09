@@ -460,3 +460,15 @@ button i {
     font-size: 50px;
     margin: 15px 0px;
 }
+.contactContainer-submit{
+    background-color: #dc1928;
+    width: 100px;
+    height: 40px;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
