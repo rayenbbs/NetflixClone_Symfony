@@ -31,7 +31,7 @@ class EntityController extends AbstractController
     #[Route('/entity/{id}', name: 'app.entity')]
     public function show(
         Request $request,
-        $id
+                $id
     ): Response {
         // Fetch entity by ID
         $entity = $this->entityRepository->find($id);
@@ -69,7 +69,7 @@ class EntityController extends AbstractController
     #[Route('/entities', name: 'app.entities')]
     public function index(): Response
     {
-        return $this->render('entity/index.html.twig', [
+        return $this->render('entity/watch.html.twig', [
             'controller_name' => 'EntityController',
         ]);
     }

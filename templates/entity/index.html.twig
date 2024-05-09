@@ -17,7 +17,7 @@
                         <h4>Season {{ entity.getVideos()[0].getSeason() }} Episode {{ entity.getVideos()[0].getEpisode() }}</h4>
                     {% endif %}
                     <div class="buttons">
-                        <button onclick="watchVideo({{ entity.getVideos()[0].getId() }})"><i class="fa-solid fa-play"></i>Play</button>
+                        <button onclick="watchVideo({{ (entity.getVideos()[0]).getId() }})"><i class="fa-solid fa-play"></i>Play</button>
                         <button onclick="volumeToggle(this)"><i class="fa-solid fa-volume-xmark"></i></button>
                     </div>
                 {% endif %}
@@ -27,29 +27,29 @@
 
     {% if (isMovie == false) %}
 
-    <!-- Seasons and videos container -->
-    <div class="seasonsContainer">
-        {% for season in seasons %}
-            <div class="season">
-                <h3>Season {{ season.seasonNumber }}</h3>
-                <div class="videos">
-                    {% for video in season.videos %}
-                        <a href="{{ path('app_home') }}">
-                            <div class="episodeContainer small">
-                                <div class="contents">
-                                    <img src="{{ asset(entity.getThumbnail()) }}" title="{{ video.getTitle() }}">
-                                    <div class="videoInfo">
-                                        <h4>{{ video.getEpisode() ~ '. ' ~ video.getTitle() }}</h4>
-                                        <span>{{ asset(video.getDescription()) }}</span>
+        <!-- Seasons and videos container -->
+        <div class="seasonsContainer">
+            {% for season in seasons %}
+                <div class="season">
+                    <h3>Season {{ season.seasonNumber }}</h3>
+                    <div class="videos">
+                        {% for video in season.videos %}
+                            <a href="{{ path('app.video', {'id': video.getId()}) }}">
+                                <div class="episodeContainer small">
+                                    <div class="contents">
+                                        <img src="{{ asset(entity.getThumbnail()) }}" title="{{ video.getTitle() }}">
+                                        <div class="videoInfo">
+                                            <h4>{{ video.getEpisode() ~ '. ' ~ video.getTitle() }}</h4>
+                                            <span>{{ asset(video.getDescription()) }}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
-                    {% endfor %}
+                            </a>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>*
+            {% endfor %}
+        </div>*
     {% endif %}
 
     <div class='entities'>
