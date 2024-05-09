@@ -1,187 +1,52 @@
 <?php
 
-namespace App\Entity;
+namespace App\Controller;
 
+use App\Entity\Video;
 use App\Repository\VideoRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-#[ORM\Entity(repositoryClass: VideoRepository::class)]
-class Video
+
+class VideoController extends AbstractController
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    private VideoRepository $videoRepository;
+    private ManagerRegistry $doctrine;
+    private TokenStorageInterface $tokenStorage;
 
-    #[ORM\Column(length: 70)]
-    private ?string $title = null;
-
-    #[ORM\Column(length: 1000)]
-    private ?string $description = null;
-
-    #[ORM\Column(length: 250)]
-    private ?string $filePath = null;
-
-    #[ORM\Column]
-    private ?bool $isMovie = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $uploadDate = null;
-
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $releaseDate = null;
-
-    #[ORM\Column]
-    private ?int $views = null;
-
-    #[ORM\Column(length: 10)]
-    private ?string $duration = null;
-
-    #[ORM\Column]
-    private ?int $season = null;
-
-    #[ORM\Column]
-    private ?int $episode = null;
-
-    #[ORM\ManyToOne(inversedBy: 'videos')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Entity $entity = null;
-
-    public function getId(): ?int
+    public function __construct(VideoRepository $videoRepository, ManagerRegistry $doctrine, TokenStorageInterface $tokenStorage)
     {
-        return $this->id;
+        $this->videoRepository = $videoRepository;
+        $this->doctrine = $doctrine;
+        $this->tokenStorage = $tokenStorage;
     }
 
-    public function getTitle(): ?string
+    #[Route('entity/watch/{id}', name: 'app.video')]
+    public function watchVideo(Request $request, int $id): Response
     {
-        return $this->title;
-    }
+        $video = $this->videoRepository->find($id);
 
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
+        if (!$video) {
+            throw $this->createNotFoundException('Video not found');
+        }
 
-        return $this;
-    }
+        $video->incrementViews();
+        $this->doctrine->getManager()->flush();
 
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
+        // Get the currently logged-in user
+        //$user = $this->tokenStorage->getToken()->getUser();
 
-    public function setDescription(string $description): static
-    {
-        $this->description = $description;
+        $upNextVideo = $this->videoRepository->getUpNext($video);
 
-        return $this;
-    }
-
-    public function getFilePath(): ?string
-    {
-        return $this->filePath;
-    }
-
-    public function setFilePath(string $filePath): static
-    {
-        $this->filePath = $filePath;
-
-        return $this;
-    }
-
-    public function isMovie(): ?bool
-    {
-        return $this->isMovie;
-    }
-
-    public function setMovie(bool $isMovie): static
-    {
-        $this->isMovie = $isMovie;
-
-        return $this;
-    }
-
-    public function getUploadDate(): ?\DateTimeInterface
-    {
-        return $this->uploadDate;
-    }
-
-    public function setUploadDate(\DateTimeInterface $uploadDate): static
-    {
-        $this->uploadDate = $uploadDate;
-
-        return $this;
-    }
-
-    public function getReleaseDate(): ?\DateTimeInterface
-    {
-        return $this->releaseDate;
-    }
-
-    public function setReleaseDate(\DateTimeInterface $releaseDate): static
-    {
-        $this->releaseDate = $releaseDate;
-
-        return $this;
-    }
-
-    public function getViews(): ?int
-    {
-        return $this->views;
-    }
-
-    public function setViews(int $views): static
-    {
-        $this->views = $views;
-
-        return $this;
-    }
-
-    public function getDuration(): ?string
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(string $duration): static
-    {
-        $this->duration = $duration;
-
-        return $this;
-    }
-
-    public function getSeason(): ?int
-    {
-        return $this->season;
-    }
-
-    public function setSeason(int $season): static
-    {
-        $this->season = $season;
-
-        return $this;
-    }
-
-    public function getEpisode(): ?int
-    {
-        return $this->episode;
-    }
-
-    public function setEpisode(int $episode): static
-    {
-        $this->episode = $episode;
-
-        return $this;
-    }
-
-    public function getEntity(): ?Entity
-    {
-        return $this->entity;
-    }
-
-    public function setEntity(?Entity $entity): static
-    {
-        $this->entity = $entity;
-
-        return $this;
+        return $this->render('video/watch.html.twig', [
+            'video' => $video,
+            'upNextVideo' => $upNextVideo,
+            'hideNav' => true,
+            // 'user' => $user, // Pass the user information to the Twig template
+        ]);
     }
 }
