@@ -16,28 +16,82 @@ class VideoRepository extends ServiceEntityRepository
         parent::__construct($registry, Video::class);
     }
 
-    //    /**
-    //     * @return Video[] Returns an array of Video objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('v')
-    //            ->andWhere('v.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('v.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findNextVideo(Video $currentVideo): ?Video
+    {
+        $qb = $this->createQueryBuilder('v');
+        $qb->where('v.entityId = :entityId')
+           ->andWhere('v.id != :videoId')
+           ->andWhere($qb->expr()->orX(
+               $qb->expr()->andX(
+                   $qb->expr()->eq('v.season', ':season'),
+                   $qb->expr()->gt('v.episode', ':episode')
+               ),
+               $qb->expr()->gt('v.season', ':season')
+           ))
+           ->setParameter('entityId', $currentVideo->getEntityId())
+           ->setParameter('season', $currentVideo->getSeasonNumber())
+           ->setParameter('episode', $currentVideo->getEpisodeNumber())
+           ->setParameter('videoId', $currentVideo->getId())
+           ->orderBy('v.season')
+           ->addOrderBy('v.episode')
+           ->setMaxResults(1);
 
-    //    public function findOneBySomeField($value): ?Video
-    //    {
-    //        return $this->createQueryBuilder('v')
-    //            ->andWhere('v.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $nextVideo = $qb->getQuery()->getResult();
+
+        if (empty($nextVideo)) {
+            $qb = $this->createQueryBuilder('v');
+            $qb->where('v.season <= 1')
+               ->andWhere('v.episode <= 1')
+               ->andWhere('v.id != :videoId')
+               ->setParameter('videoId', $currentVideo->getId())
+               ->orderBy('v.views', 'DESC')
+               ->setMaxResults(1);
+
+            $nextVideo = $qb->getQuery()->getResult();
+        }
+
+        return empty($nextVideo) ? null : $nextVideo[0];
+    }
+
+    public function findNextVideoForUser(int $entityId, string $username): ?int
+    {
+        $qb = $this->createQueryBuilder('v');
+        $qb->select('vp.videoId')
+           ->innerJoin('App\Entity\VideoProgress', 'vp', 'WITH', 'vp.videoId = v.id')
+           ->where('v.entityId = :entityId')
+           ->andWhere('vp.username = :username')
+           ->orderBy('vp.dateModified', 'DESC')
+           ->setParameter('entityId', $entityId)
+           ->setParameter('username', $username)
+           ->setMaxResults(1);
+
+        $videoId = $qb->getQuery()->getResult();
+
+        if (empty($videoId)) {
+            $qb = $this->createQueryBuilder('v');
+            $qb->select('v.id')
+               ->where('v.entityId = :entityId')
+               ->setParameter('entityId', $entityId)
+               ->orderBy('v.season')
+               ->addOrderBy('v.episode')
+               ->setMaxResults(1);
+
+            $videoId = $qb->getQuery()->getResult();
+        }
+
+        return empty($videoId) ? null : $videoId[0];
+    }
+
+    public function hasSeen(Video $video, string $username): bool
+    {
+        $qb = $this->createQueryBuilder('v');
+        $qb->select('COUNT(vp.id)')
+           ->innerJoin('App\Entity\VideoProgress', 'vp', 'WITH', 'vp.videoId = v.id')
+           ->where('vp.username = :username')
+           ->andWhere('vp.videoId = :videoId')
+           ->setParameter('username', $username)
+           ->setParameter('videoId', $video->getId());
+
+        return $qb->getQuery()->getSingleScalarResult() != 0;
+    }
 }

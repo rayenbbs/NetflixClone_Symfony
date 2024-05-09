@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('assets/style/style.css') }}">
+    <title>
+        Categories
+    </title>
+</head>
+<body>
+
+    <div class="previewCategories">
+        {% for category in categories %}
+            <div class="category">
+                    <h3>{{ category.name }}</h3>
+                <div class="entities">
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
+
+
+
