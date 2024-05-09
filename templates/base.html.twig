@@ -13,15 +13,13 @@
 </head>
 <body>
 <div class='wrapper'>
-    {% if hideNav is not defined or not hideNav %}
-        {% include 'includes/navBar.html.twig' %}
-    {% endif %}
-    {% block content %}
+{% include 'includes/navBar.html.twig' %}
+{% block content %}
 
-    {% endblock %}
-    {% block script %}
+{% endblock %}
+{% block script %}
 
-    {% endblock %}
-</div>
+{% endblock %}
+    </div>
 </body>
 </html>
